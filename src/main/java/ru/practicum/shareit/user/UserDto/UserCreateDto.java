@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserCreateDto {
 
     public interface Default {}
+
     public interface OnCreate extends Default {}
 
     private String name;

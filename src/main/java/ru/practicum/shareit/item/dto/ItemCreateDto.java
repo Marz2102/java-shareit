@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class ItemCreateDto {
 
     public interface Default {}
+
     public interface OnCreate extends ItemCreateDto.Default {}
 
     @NotEmpty(groups = {OnCreate.class}, message = "Введите непустое название предмета")
