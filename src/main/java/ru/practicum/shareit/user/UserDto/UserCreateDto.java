@@ -18,7 +18,7 @@ public class UserCreateDto {
 
     private String name;
 
-    @Email(groups = {Default.class}, message = "Введите почту в корректном формате")
-    @NotNull(groups = {OnCreate.class}, message = "Укажите почту")
+    @Email(groups = Default.class, message = "Введите почту в корректном формате")
+    @NotNull(groups = OnCreate.class, message = "Укажите почту")
     private String email;
 }

@@ -18,9 +18,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(Long id) {
+    public UserDto getUserDtoById(Long id) {
         return UserMapper.toUserDto(userStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id - " + id + " не найден")));
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userStorage.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id - " + id + " не найден"));
     }
 
     @Override
