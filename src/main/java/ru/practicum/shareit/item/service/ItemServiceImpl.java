@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long id) {
+    public ItemDto getItemById(Long id, Long userId) {
         return ItemMapper.toItemDto(itemStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет с id - " + id + " не найден")));
     }
@@ -50,20 +50,19 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Long id, ItemCreateDto itemCreateDto, Long userId) {
-        Item updatedItem = itemStorage.findById(id)
-                .map(item -> ItemMapper.updateItem(item, itemCreateDto))
+        Item item = itemStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет с id - " + id + " не найден"));
 
-        if (!updatedItem.getOwner().getId().equals(userId)) {
-            throw new DataAccessException("У пользователя с id - " + userId + " нет возможности редактировать предмет с id - " + updatedItem.getId());
+        if (item.getOwner() != null && !item.getOwner().getId().equals(userId)) {
+            throw new DataAccessException("У пользователя с id - " + userId + " нет возможности редактировать предмет с id - " + item.getId());
         }
 
-        return ItemMapper.toItemDto(itemStorage.updateItem(updatedItem));
+        return ItemMapper.toItemDto(itemStorage.updateItem(ItemMapper.updateItem(item, itemCreateDto)));
     }
 
     @Override
-    public List<ItemDto> searchItems(String query) {
-        if (query.isEmpty()) {
+    public List<ItemDto> searchItems(String query, Long userId) {
+        if (query == null || query.isBlank()) {
             return List.of();
         }
 

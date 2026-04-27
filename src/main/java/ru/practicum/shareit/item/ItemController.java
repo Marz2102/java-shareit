@@ -20,8 +20,10 @@ public class ItemController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ItemDto> getItemById(@PathVariable Long id) {
-        return ResponseEntity.ok(itemService.getItemById(id));
+    public ResponseEntity<ItemDto> getItemById(
+            @PathVariable Long id,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return ResponseEntity.ok(itemService.getItemById(id, userId));
     }
 
     @GetMapping
@@ -48,7 +50,8 @@ public class ItemController {
 
     @GetMapping(path = "/search")
     public ResponseEntity<List<ItemDto>> searchItems(
-            @RequestParam(name = "text", defaultValue = "") String text) {
-        return ResponseEntity.ok(itemService.searchItems(text));
+            @RequestParam(name = "text", defaultValue = "") String text,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return ResponseEntity.ok(itemService.searchItems(text, userId));
     }
 }

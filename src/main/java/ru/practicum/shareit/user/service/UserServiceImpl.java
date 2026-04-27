@@ -9,6 +9,8 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserCreateDto userCreateDto) {
-        if (userStorage.existsByEmail(userCreateDto.getEmail())) {
+        if (userStorage.findByEmail(userCreateDto.getEmail()).isPresent()) {
             throw new DuplicateException("Пользователь с почтой  - " + userCreateDto.getEmail() + " существует");
         }
 
@@ -40,8 +42,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long id, UserCreateDto userCreateDto) {
-        if (userStorage.existsByEmail(userCreateDto.getEmail())) {
-            throw new DuplicateException("Пользователь с почтой  - " + userCreateDto.getEmail() + " существует");
+        if (userCreateDto.getEmail() != null) {
+            Optional<User> optionalUser = userStorage.findByEmail(userCreateDto.getEmail());
+            if (optionalUser.isPresent() && !optionalUser.get().getId().equals(id)) {
+                throw new DuplicateException("Пользователь с почтой  - " + userCreateDto.getEmail() + " существует");
+            }
         }
 
         User updatedUser = userStorage.findById(id)
@@ -49,7 +54,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с id - " + id + " не найден"));
 
         return UserMapper.toUserDto(userStorage.updateUser(updatedUser));
-
     }
 
     @Override

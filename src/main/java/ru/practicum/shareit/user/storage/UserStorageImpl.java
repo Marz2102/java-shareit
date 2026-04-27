@@ -8,7 +8,7 @@ import java.util.*;
 @Repository
 public class UserStorageImpl implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
-    private final Set<String> emails = new HashSet<>();
+    private final Map<String, User> emails = new HashMap<>();
 
     @Override
     public Optional<User> findById(Long id) {
@@ -16,15 +16,15 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        return emails.contains(email);
+    public Optional<User> findByEmail(String email) {
+        return Optional.ofNullable(emails.get(email));
     }
 
     @Override
     public User addUser(User user) {
         user.setId(generateNextId());
         users.put(user.getId(), user);
-        emails.add(user.getEmail());
+        emails.put(user.getEmail(), user);
 
         return user;
     }
@@ -35,7 +35,7 @@ public class UserStorageImpl implements UserStorage {
         emails.remove(oldEmail);
 
         users.put(user.getId(), user);
-        emails.add(user.getEmail());
+        emails.put(user.getEmail(), user);
 
         return user;
     }

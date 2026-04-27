@@ -8,7 +8,7 @@ public interface UserStorage {
 
     Optional<User> findById(Long id);
 
-    boolean existsByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     User addUser(User user);
 
