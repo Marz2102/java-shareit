@@ -19,16 +19,9 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<ItemDto> getItemById(
-            @PathVariable Long id,
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ResponseEntity.ok(itemService.getItemDtoById(id, userId));
-    }
-
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ResponseEntity.ok(itemService.getItems(userId));
+    public ResponseEntity<List<ItemCommentsDto>> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        return ResponseEntity.ok(itemService.getCommentsForUserItems(userId));
     }
 
     @PostMapping

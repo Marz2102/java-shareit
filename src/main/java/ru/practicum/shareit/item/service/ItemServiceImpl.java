@@ -2,8 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.exceptions.DataAccessException;
+import ru.practicum.shareit.exception.exceptions.NotAvailableException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
@@ -25,36 +27,21 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
+    private final BookingRepository bookingRepository;
     private final UserService userService;
-    private final BookingService bookingService;
 
     public ItemServiceImpl(final ItemRepository itemRepository, final CommentRepository
-            commentRepository, final UserService userService, final BookingService bookingService) {
+            commentRepository, final UserService userService, final BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.commentRepository = commentRepository;
         this.userService = userService;
-        this.bookingService = bookingService;
-    }
-
-    @Override
-    public ItemDto getItemDtoById(Long id, Long userId) {
-        return ItemMapper.toItemDto(itemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Предмет с id - " + id + " не найден")));
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
     public Item getItemById(Long id, Long userId) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет с id - " + id + " не найден"));
-    }
-
-    @Override
-    public List<ItemDto> getItems(Long userId) {
-        return itemRepository
-                .findByOwnerId(userId)
-                .stream()
-                .map(ItemMapper::toItemDto)
-                .toList();
     }
 
     @Override
@@ -96,6 +83,11 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addComment(CommentCreateDto commentCreateDto, Long userId, Long itemId) {
         Item item = getItemById(itemId, userId);
         User user = userService.getUserById(userId);
+        Optional<Booking> booking = bookingRepository.findFirst1BookingByBookerIdAndItemIdAndStatusOrderByEndAsc(userId, itemId, BookingStatus.APPROVED);
+
+        if (booking.isEmpty() || booking.get().getEnd().isAfter(LocalDateTime.now())) {
+            throw new NotAvailableException("Вы не можете оставить комментарий для предмета, который не использовали или используете в данный момент");
+        }
 
         Comment comment = CommentMapper.toComment(commentCreateDto);
         comment.setItem(item);
@@ -115,8 +107,8 @@ public class ItemServiceImpl implements ItemService {
                 .map(CommentMapper::toCommentDto)
                 .toList();
 
-        Optional<LocalDateTime> lastBooking = bookingService.getLastBookingDate(itemId);
-        Optional<LocalDateTime> nextBooking = bookingService.getNextBookingDate(itemId);
+        Optional<LocalDateTime> lastBooking = bookingRepository.findLastBookingDate(itemId, LocalDateTime.now(), userId).map(Booking::getStart);
+        Optional<LocalDateTime> nextBooking = bookingRepository.findNextBookingDate(itemId, LocalDateTime.now(), userId).map(Booking::getStart);
 
         ItemCommentsDto itemCommentsDto = ItemMapper.toItemCommentsDto(item);
         itemCommentsDto.setComments(comments);
