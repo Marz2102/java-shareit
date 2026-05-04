@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.service;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -15,10 +14,10 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.rmi.ServerException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -131,5 +130,17 @@ public class BookingServiceImpl implements BookingService {
 
         BookingMapper.updateBookingStatus(booking, isApproved);
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
+    }
+
+    @Override
+    public Optional<LocalDateTime> getLastBookingDate(Long itemId) {
+        Optional<Booking> booking = bookingRepository.findLastBookingDate(itemId, LocalDateTime.now());
+        return booking.map(Booking::getStart);
+    }
+
+    @Override
+    public Optional<LocalDateTime> getNextBookingDate(Long itemId) {
+        Optional<Booking> booking = bookingRepository.findNextBookingDate(itemId, LocalDateTime.now());
+        return booking.map(Booking::getStart);
     }
 }

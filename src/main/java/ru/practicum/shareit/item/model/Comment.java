@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,4 +29,7 @@ public class Comment {
 
     @Column(name = "text", nullable = false)
     private String text;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime created;
 }

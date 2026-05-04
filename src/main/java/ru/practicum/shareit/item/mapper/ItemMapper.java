@@ -1,5 +1,6 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.mapper;
 
+import ru.practicum.shareit.item.dto.ItemCommentsDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -15,6 +16,17 @@ public class ItemMapper {
         itemDto.setAvailable(item.isAvailable());
 
         return itemDto;
+    }
+
+    public static ItemCommentsDto toItemCommentsDto(Item item) {
+        ItemCommentsDto itemCommentsDto = new ItemCommentsDto();
+
+        itemCommentsDto.setId(item.getId());
+        itemCommentsDto.setName(item.getName());
+        itemCommentsDto.setDescription(item.getDescription());
+        itemCommentsDto.setAvailable(item.isAvailable());
+
+        return itemCommentsDto;
     }
 
     public static Item toItem(ItemCreateDto itemCreateDto) {
