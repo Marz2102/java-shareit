@@ -1,8 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.DataAccessException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.exceptions.DataAccessException;
+import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -24,9 +24,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long id, Long userId) {
+    public ItemDto getItemDtoById(Long id, Long userId) {
         return ItemMapper.toItemDto(itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет с id - " + id + " не найден")));
+    }
+
+    @Override
+    public Item getItemById(Long id, Long userId) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Предмет с id - " + id + " не найден"));
     }
 
     @Override

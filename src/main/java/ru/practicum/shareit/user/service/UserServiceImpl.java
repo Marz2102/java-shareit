@@ -1,8 +1,8 @@
 package ru.practicum.shareit.user.service;
 
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.DuplicateException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.exceptions.DuplicateException;
+import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.user.UserDto.UserCreateDto;
 import ru.practicum.shareit.user.UserDto.UserDto;
 import ru.practicum.shareit.user.UserMapper;
@@ -29,6 +29,11 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id - " + id + " не найден"));
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
     }
 
     @Override

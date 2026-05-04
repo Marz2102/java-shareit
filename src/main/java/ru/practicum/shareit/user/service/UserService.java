@@ -10,6 +10,8 @@ public interface UserService {
 
     User getUserById(Long id);
 
+    boolean existsById(Long id);
+
     UserDto addUser(UserCreateDto userCreateDto);
 
     UserDto updateUser(Long id, UserCreateDto userCreateDto);

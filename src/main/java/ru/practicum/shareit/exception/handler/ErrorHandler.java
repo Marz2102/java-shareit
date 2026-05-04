@@ -6,21 +6,22 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.DataAccessException;
-import ru.practicum.shareit.exception.DuplicateException;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.exception.exceptions.*;
 
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class, NotAvailableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final Exception e) {
-        return new ErrorResponse("Ошибка валидации данных", e.getMessage());
+        if (e instanceof NotAvailableException) {
+            return new ErrorResponse("Данный ресурс недоступен в данный момент", e.getMessage());
+        } else {
+            return new ErrorResponse("Ошибка валидации данных", e.getMessage());
+        }
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(DuplicateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicateException(final DuplicateException e) {
         return new ErrorResponse("Ошибка уникальности данных", e.getMessage());
