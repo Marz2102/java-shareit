@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -38,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
 
         User owner = booking.getItem().getOwner();
 
-        if (!userService.existsById(userId)) {
+        if (userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
@@ -57,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getBookingsForUser(Long userId, BookingState state) {
-        if (!userService.existsById(userId)) {
+        if (userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
@@ -77,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getBookingsForItemsByUser(Long userId, BookingState state) {
-        if (!userService.existsById(userId)) {
+        if (userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
@@ -120,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = getBookingById(id);
         User owner = booking.getItem().getOwner();
 
-        if (!userService.existsById(userId)) {
+        if (userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
@@ -130,17 +129,5 @@ public class BookingServiceImpl implements BookingService {
 
         BookingMapper.updateBookingStatus(booking, isApproved);
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
-    }
-
-    @Override
-    public Optional<LocalDateTime> getLastBookingDate(Long itemId) {
-        Optional<Booking> booking = bookingRepository.findLastBookingDate(itemId, LocalDateTime.now());
-        return booking.map(Booking::getStart);
-    }
-
-    @Override
-    public Optional<LocalDateTime> getNextBookingDate(Long itemId) {
-        Optional<Booking> booking = bookingRepository.findNextBookingDate(itemId, LocalDateTime.now());
-        return booking.map(Booking::getStart);
     }
 }

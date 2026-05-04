@@ -52,12 +52,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(Long userId, BookingStatus status);
 
     @Query("SELECT b FROM Booking as b " +
-    "WHERE b.item.id = ?1 AND b.end < ?2 " +
-    "ORDER BY b.end LIMIT 1")
-    Optional<Booking> findLastBookingDate(Long itemId, LocalDateTime date);
+    "WHERE b.item.id = ?1 AND b.start < ?2 AND b.booker.id != ?3 " +
+    "ORDER BY b.start LIMIT 1")
+    Optional<Booking> findLastBookingDate(Long itemId, LocalDateTime date, Long userId);
 
     @Query("SELECT b FROM Booking as b " +
-            "WHERE b.item.id = ?1 AND b.start > ?2 " +
+            "WHERE b.item.id = ?1 AND b.start > ?2 AND b.booker.id != ?3 " +
             "ORDER BY b.start LIMIT 1")
-    Optional<Booking> findNextBookingDate(Long itemId, LocalDateTime date);
+    Optional<Booking> findNextBookingDate(Long itemId, LocalDateTime date, Long userId);
+
+    Optional<Booking> findFirst1BookingByBookerIdAndItemIdAndStatusOrderByEndAsc(Long bookerId, Long itemId, BookingStatus status);
 }
