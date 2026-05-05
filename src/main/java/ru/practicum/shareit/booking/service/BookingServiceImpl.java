@@ -37,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
 
         User owner = booking.getItem().getOwner();
 
-        if (userService.existsById(userId)) {
+        if (!userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
@@ -55,12 +55,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsForUser(Long userId, BookingState state) {
-        if (userService.existsById(userId)) {
+    public List<BookingDto> getBookingsForUser(Long userId, String state) {
+        if (!userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
-        List<Booking> bookings = switch (state) {
+        BookingState bookingState;
+        try {
+            bookingState = BookingState.valueOf(state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Укажите корректный параметр state. " +
+                    "Возможные значения: CURRENT, PAST, FUTURE, WAITING, REJECTED, ALL");
+        }
+
+        List<Booking> bookings = switch (bookingState) {
             case CURRENT -> bookingRepository.findAllCurrentBookingsByBookerIdOrderByStartDesc(userId, LocalDateTime.now());
             case PAST -> bookingRepository.findAllPastBookingsByBookerIdOrderByStartDesc(userId, LocalDateTime.now());
             case FUTURE -> bookingRepository.findAllFutureBookingsByBookerIdOrderByStartDesc(userId, LocalDateTime.now());
@@ -75,12 +83,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsForItemsByUser(Long userId, BookingState state) {
-        if (userService.existsById(userId)) {
+    public List<BookingDto> getBookingsForItemsByUser(Long userId, String state) {
+        if (!userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
 
-        List<Booking> bookings = switch (state) {
+        BookingState bookingState;
+        try {
+            bookingState = BookingState.valueOf(state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Укажите корректный параметр state. " +
+                    "Возможные значения: CURRENT, PAST, FUTURE, WAITING, REJECTED, ALL");
+        }
+
+        List<Booking> bookings = switch (bookingState) {
             case CURRENT -> bookingRepository.findAllCurrentItemBookingsByOwnerIdOrderByStartDesc(userId, LocalDateTime.now());
             case PAST -> bookingRepository.findAllPastItemBookingsByOwnerIdOrderByStartDesc(userId, LocalDateTime.now());
             case FUTURE -> bookingRepository.findAllFutureItemBookingsByOwnerIdOrderByStartDesc(userId, LocalDateTime.now());
@@ -98,6 +114,10 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto addBooking(BookingCreateDto bookingCreateDto, Long userId) {
         User user = userService.getUserById(userId);
         Item item = itemService.getItemById(bookingCreateDto.getItemId(), userId);
+
+        if (Objects.equals(userId, item.getOwner().getId())) {
+            throw new NotAvailableException("Владелец не может забронировать свой предмет");
+        }
 
         if (bookingCreateDto.getStart().isEqual(bookingCreateDto.getEnd())) {
             throw new ValidationException("Укажите разные даты начала и окончания бронирования");
@@ -119,8 +139,12 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = getBookingById(id);
         User owner = booking.getItem().getOwner();
 
-        if (userService.existsById(userId)) {
+        if (!userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
+        }
+
+        if (booking.getStatus() != BookingStatus.WAITING) {
+            throw new ValidationException("Для подтверждения бронирования оно должно находиться в статусе ожидания");
         }
 
         if (!Objects.equals(owner.getId(), userId)) {

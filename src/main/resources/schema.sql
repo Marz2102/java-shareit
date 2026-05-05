@@ -40,11 +40,11 @@ CREATE TABLE IF NOT EXISTS bookings (
     start_booking TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_booking TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     item_id BIGINT NOT NULL,
-    owner_id BIGINT NOT NULL,
+    booker_id BIGINT NOT NULL,
     status VARCHAR(8) NOT NULL DEFAULT 'WAITING',
     CONSTRAINT pk_booking PRIMARY KEY (id),
     CONSTRAINT fk_booking_item FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_booking_owner FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
+    CONSTRAINT fk_booking_owner FOREIGN KEY (booker_id) REFERENCES users(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS comments (

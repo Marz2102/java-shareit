@@ -31,7 +31,7 @@ public class Booking {
     private Item item;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
 
     @Enumerated(EnumType.STRING)
