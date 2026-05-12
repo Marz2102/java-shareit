@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.UserDto;
+package ru.practicum.shareit.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
@@ -15,11 +15,11 @@ public class UserCreateDto {
 
     public interface Default {}
 
-    public interface OnCreate extends Default {}
+    public interface OnCreate extends ru.practicum.shareit.user.dto.UserCreateDto.Default {}
 
     private String name;
 
-    @Email(groups = Default.class, message = "Введите почту в корректном формате")
-    @NotNull(groups = OnCreate.class, message = "Укажите почту")
+    @Email(groups = ru.practicum.shareit.user.dto.UserCreateDto.Default.class, message = "Введите почту в корректном формате")
+    @NotNull(groups = ru.practicum.shareit.user.dto.UserCreateDto.OnCreate.class, message = "Укажите почту")
     private String email;
 }
