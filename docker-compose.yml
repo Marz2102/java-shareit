@@ -14,5 +14,32 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: shareit-server
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "9090:9090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=user
+      - SPRING.DATASOURCE.DRIVER-CLASS-NAME=org.postgresql.Driver
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: shareit-gateway
+    restart: always
+    depends_on:
+      - server
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:

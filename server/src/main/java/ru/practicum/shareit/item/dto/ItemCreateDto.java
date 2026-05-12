@@ -15,7 +15,7 @@ public class ItemCreateDto {
 
     public interface Default {}
 
-    public interface OnCreate extends ItemCreateDto.Default {}
+    public interface OnCreate extends Default {}
 
     @NotEmpty(groups = {OnCreate.class}, message = "Введите непустое название предмета")
     @NotNull(groups = {OnCreate.class}, message = "Укажите название предмета")
