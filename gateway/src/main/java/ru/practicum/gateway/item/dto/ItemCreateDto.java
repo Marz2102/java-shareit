@@ -27,4 +27,6 @@ public class ItemCreateDto {
 
     @NotNull(groups = {OnCreate.class}, message = "Укажите доступность предмета")
     private Boolean available;
+
+    private Long requestId;
 }

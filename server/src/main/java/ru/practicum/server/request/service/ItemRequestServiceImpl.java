@@ -15,6 +15,7 @@ import ru.practicum.server.request.storage.ItemRequestRepository;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +40,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         User user = userService.getUserById(userId);
 
         itemRequest.setRequester(user);
+        itemRequest.setCreated(LocalDateTime.now());
 
         return RequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest));
     }
 
     @Override
     public List<FullItemRequestDto> getRequests(Long userId) {
-        List<FullItemRequestDto> requests = itemRequestRepository.findAll()
+        List<FullItemRequestDto> requests = itemRequestRepository.findAllByRequesterId(userId)
                 .stream()
                 .map(RequestMapper::toFullItemRequestDto)
                 .toList();
