@@ -14,6 +14,8 @@ import ru.practicum.server.item.model.Comment;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.storage.CommentRepository;
 import ru.practicum.server.item.storage.ItemRepository;
+import ru.practicum.server.request.model.ItemRequest;
+import ru.practicum.server.request.service.ItemRequestService;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
 
@@ -29,13 +31,16 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
     private final UserService userService;
+    private final ItemRequestService itemRequestService;
 
     public ItemServiceImpl(final ItemRepository itemRepository, final CommentRepository
-            commentRepository, final UserService userService, final BookingRepository bookingRepository) {
+            commentRepository, final UserService userService, final BookingRepository bookingRepository,
+                           final ItemRequestService itemRequestService) {
         this.itemRepository = itemRepository;
         this.commentRepository = commentRepository;
         this.userService = userService;
         this.bookingRepository = bookingRepository;
+        this.itemRequestService = itemRequestService;
     }
 
     @Override
@@ -48,6 +53,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(ItemCreateDto itemCreateDto, Long userId) {
         Item item = ItemMapper.toItem(itemCreateDto);
         User user = userService.getUserById(userId);
+
+        if (itemCreateDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestService.getRequestById(itemCreateDto.getRequestId());
+            item.setRequest(itemRequest);
+        }
 
         item.setOwner(user);
 
