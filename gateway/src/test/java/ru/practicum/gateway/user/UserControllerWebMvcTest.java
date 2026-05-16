@@ -35,8 +35,6 @@ public class UserControllerWebMvcTest {
     @MockBean
     private UserClient userClient;
 
-    private UserCreateDto userCreateDto = new UserCreateDto("John Smith", "1@yandex.ru");
-
     @Test
     void testGetUserById() throws Exception {
         ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "name", "John"));
@@ -60,17 +58,38 @@ public class UserControllerWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-    
+
     @Test
-    void testCreateUserWithInvalidEmail() throws Exception {
+    void testCreateUser() throws Exception {
+        UserCreateDto userCreateDto = new UserCreateDto("John Smith", "1@yandex.ru");
+
+        ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "name", "John Smith",
+                "email", "1@yandex.ru"));
+
+        when(userClient.addUser(any(UserCreateDto.class))).thenReturn(response);
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John\",\"email\":\"1yandex.ru\"}"))
+                        .content(objectMapper.writeValueAsString(userCreateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("John Smith"))
+                .andExpect(jsonPath("$.email").value("1@yandex.ru"));
+    }
+
+    @Test
+    void testCreateUserWithInvalidEmail() throws Exception {
+        UserCreateDto userCreateDto = new UserCreateDto("John Smith", "1yandex.ru");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreateDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void testUpdateUser() throws Exception {
+        UserCreateDto userCreateDto = new UserCreateDto("John Smith", "1@yandex.ru");
         ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1, "name", "Johnny Smith"));
 
         when(userClient.updateUser(eq(1L), any(UserCreateDto.class))).thenReturn(response);
@@ -84,9 +103,11 @@ public class UserControllerWebMvcTest {
 
     @Test
     void testUpdateUserWithBadEmail() throws Exception {
+        UserCreateDto userCreateDto = new UserCreateDto("John Smith", "1yandex.ru");
+
         mockMvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John\",\"email\":\"1yandex.ru\"}"))
+                        .content(objectMapper.writeValueAsString(userCreateDto)))
                 .andExpect(status().isBadRequest());
     }
 

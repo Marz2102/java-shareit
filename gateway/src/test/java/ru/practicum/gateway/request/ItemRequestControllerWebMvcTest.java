@@ -1,5 +1,6 @@
 package ru.practicum.gateway.request;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,6 +30,9 @@ public class ItemRequestControllerWebMvcTest {
     @MockBean
     private ItemRequestClient itemRequestClient;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     void testGetRequestById() throws Exception {
         ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "description", "Some usual description"));
@@ -56,7 +60,24 @@ public class ItemRequestControllerWebMvcTest {
     }
 
     @Test
+    void testCreateRequest() throws Exception {
+        CreateRequestDto createRequestDto = new CreateRequestDto("Some request");
+        ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "description", "Some usual description"));
+
+        when(itemRequestClient.createRequest(any(CreateRequestDto.class), eq(1L))).thenReturn(response);
+
+        mockMvc.perform(post("/requests")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.description").value("Some usual description"));
+    }
+
+    @Test
     void testCreateRequestsWhenItemNotFound() throws Exception {
+        CreateRequestDto createRequestDto = new CreateRequestDto("description");
         ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         when(itemRequestClient.createRequest(any(CreateRequestDto.class), eq(1L))).thenReturn(response);
@@ -64,7 +85,7 @@ public class ItemRequestControllerWebMvcTest {
         mockMvc.perform(post("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L)
-                        .content("{\"description\":\"description\"}"))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isNotFound());
     }
 
