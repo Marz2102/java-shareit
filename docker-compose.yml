@@ -16,9 +16,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    build: ./server
     container_name: shareit-server
     restart: always
     depends_on:
@@ -34,13 +32,12 @@ services:
       - JAVA_OPTS=-Duser.timezone=Europe/Moscow
 
   gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
+    build: ./gateway
     container_name: shareit-gateway
     restart: always
     environment:
       TZ: Europe/Moscow
+      SHAREIT_SERVER_URL: http://server:9090
     depends_on:
       - server
     ports:
