@@ -62,7 +62,8 @@ public class ItemRequestControllerWebMvcTest {
     @Test
     void testCreateRequest() throws Exception {
         CreateRequestDto createRequestDto = new CreateRequestDto("Some request");
-        ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "description", "Some usual description"));
+        ResponseEntity<Object> response = ResponseEntity.status(201).body(
+                (Map.of("id", 1L, "description", "Some usual description")));
 
         when(itemRequestClient.createRequest(any(CreateRequestDto.class), eq(1L))).thenReturn(response);
 
@@ -70,7 +71,7 @@ public class ItemRequestControllerWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.description").value("Some usual description"));
     }

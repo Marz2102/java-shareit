@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsForUser(Long userId, String state) {
+    public List<BookingDto> getBookingsForUser(Long userId, String state, Integer from, Integer size) {
         if (!userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }
@@ -83,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsForItemsByUser(Long userId, String state) {
+    public List<BookingDto> getBookingsForItemsByUser(Long userId, String state, Integer from, Integer size) {
         if (!userService.existsById(userId)) {
             throw new ServerRequestException("Пользователя, отправившего запрос, не существует");
         }

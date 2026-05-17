@@ -63,7 +63,7 @@ public class UserControllerWebMvcTest {
     void testCreateUser() throws Exception {
         UserCreateDto userCreateDto = new UserCreateDto("John Smith", "1@yandex.ru");
 
-        ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "name", "John Smith",
+        ResponseEntity<Object> response = ResponseEntity.status(201).body(Map.of("id", 1L, "name", "John Smith",
                 "email", "1@yandex.ru"));
 
         when(userClient.addUser(any(UserCreateDto.class))).thenReturn(response);
@@ -71,7 +71,7 @@ public class UserControllerWebMvcTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userCreateDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("John Smith"))
                 .andExpect(jsonPath("$.email").value("1@yandex.ru"));

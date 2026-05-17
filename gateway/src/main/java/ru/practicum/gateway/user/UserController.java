@@ -1,5 +1,6 @@
 package ru.practicum.gateway.user;
 
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
+    public ResponseEntity<Object> getUserById(@Positive @PathVariable Long id) {
         return userClient.getUserDtoById(id);
     }
 
@@ -28,12 +29,12 @@ public class UserController {
     @PatchMapping(path = "/{id}")
     public ResponseEntity<Object> updateUser(
             @Validated(UserCreateDto.Default.class) @RequestBody UserCreateDto user,
-            @PathVariable Long id) {
+            @Positive @PathVariable Long id) {
         return userClient.updateUser(id, user);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteUser(@Positive @PathVariable Long id) {
         return userClient.deleteUser(id);
     }
 }

@@ -1,8 +1,9 @@
 package ru.practicum.gateway.item.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,16 +18,15 @@ public class ItemCreateDto {
 
     public interface OnCreate extends Default {}
 
-    @NotEmpty(groups = {OnCreate.class}, message = "Введите непустое название предмета")
-    @NotNull(groups = {OnCreate.class}, message = "Укажите название предмета")
+    @NotBlank(groups = {OnCreate.class}, message = "Введите непустое название предмета")
     private String name;
 
-    @NotEmpty(groups = {OnCreate.class}, message = "Введите непустое описание предмета")
-    @NotNull(groups = {OnCreate.class}, message = "Укажите описание предмета")
+    @NotBlank(groups = {OnCreate.class}, message = "Введите непустое описание предмета")
     private String description;
 
     @NotNull(groups = {OnCreate.class}, message = "Укажите доступность предмета")
     private Boolean available;
 
+    @Positive(message = "id запроса должен быть положительным")
     private Long requestId;
 }

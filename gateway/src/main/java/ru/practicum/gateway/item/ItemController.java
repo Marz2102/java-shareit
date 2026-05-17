@@ -1,6 +1,7 @@
 package ru.practicum.gateway.item;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,37 +25,37 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<Object> createItem(
             @Validated(ItemCreateDto.OnCreate.class) @RequestBody ItemCreateDto item,
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.addItem(item, userId);
     }
 
     @PatchMapping(path = "/{id}")
     public ResponseEntity<Object> updateItem(
             @Validated(ItemCreateDto.Default.class) @RequestBody ItemCreateDto item,
-            @PathVariable Long id,
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @Positive @PathVariable Long id,
+            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.updateItem(id, item, userId);
     }
 
     @GetMapping(path = "/search")
     public ResponseEntity<Object> searchItems(
             @RequestParam(name = "text", defaultValue = "") String text,
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.searchItems(text, userId);
     }
 
     @PostMapping(path = "/{itemId}/comment")
     public ResponseEntity<Object> addComment(
             @Valid @RequestBody CommentCreateDto commentCreateDto,
-            @PathVariable Long itemId,
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @Positive @PathVariable Long itemId,
+            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.addComment(commentCreateDto, userId, itemId);
     }
 
     @GetMapping(path = "/{itemId}")
     public ResponseEntity<Object> getCommentsByItemId(
-            @PathVariable Long itemId,
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @Positive @PathVariable Long itemId,
+            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.getCommentsByItemId(itemId, userId);
     }
 }

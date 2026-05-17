@@ -3,6 +3,7 @@ package ru.practicum.gateway.booking.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 public class BookingCreateDto {
 
     @NotNull(message = "Укажите id предмета для бронирования")
+    @Positive(message = "id предмета должно быть положительным")
     private Long itemId;
 
     @NotNull(message = "Укажите начало бронирования")

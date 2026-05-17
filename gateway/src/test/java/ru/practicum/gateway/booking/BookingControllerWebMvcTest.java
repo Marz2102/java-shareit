@@ -39,8 +39,8 @@ public class BookingControllerWebMvcTest {
         LocalDateTime endTime = LocalDateTime.now().plusYears(2);
 
         BookingCreateDto bookingCreateDto = new BookingCreateDto(1L, startTime, endTime);
-        ResponseEntity<Object> response = ResponseEntity.ok(Map.of("itemId", 1L, "start", startTime.toString(),
-                "end", endTime.toString()));
+        ResponseEntity<Object> response = ResponseEntity.status(201).body((Map.of("itemId", 1L, "start", startTime.toString(),
+                "end", endTime.toString())));
 
         when(bookingClient.addBooking(any(BookingCreateDto.class), eq(1L))).thenReturn(response);
 
@@ -48,7 +48,7 @@ public class BookingControllerWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L)
                         .content(objectMapper.writeValueAsString(bookingCreateDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.itemId").value(1L))
                 .andExpect(jsonPath("$.start").value(startTime.toString()))
                 .andExpect(jsonPath("$.end").value(endTime.toString()));
@@ -117,9 +117,9 @@ public class BookingControllerWebMvcTest {
     void testGetBookingsForUser() throws Exception {
         ResponseEntity<Object> response = ResponseEntity.ok(List.of());
 
-        when(bookingClient.getBookingsForUser(eq(1L), any(String.class))).thenReturn(response);
+        when(bookingClient.getBookingsForUser(eq(1L), any(String.class), any(Integer.class), any(Integer.class))).thenReturn(response);
 
-        mockMvc.perform(get("/bookings?state=ALL")
+        mockMvc.perform(get("/bookings?state=ALL&from=1&size=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk());
@@ -135,9 +135,9 @@ public class BookingControllerWebMvcTest {
     void testGetBookingsForItemsByUser() throws Exception {
         ResponseEntity<Object> response = ResponseEntity.ok(List.of());
 
-        when(bookingClient.getBookingsForItemsByUser(eq(1L), any(String.class))).thenReturn(response);
+        when(bookingClient.getBookingsForItemsByUser(eq(1L), any(String.class), any(Integer.class), any(Integer.class))).thenReturn(response);
 
-        mockMvc.perform(get("/bookings/owner?state=ALL")
+        mockMvc.perform(get("/bookings/owner?state=ALL&from=1&size=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk());
@@ -145,7 +145,7 @@ public class BookingControllerWebMvcTest {
 
     @Test
     void testGetBookingsForItemsByUserWithoutHeader() throws Exception {
-        mockMvc.perform(get("/bookings/owner?state=FUTURE"))
+        mockMvc.perform(get("/bookings/owner?state=FUTURE&from=1&size=1"))
                 .andExpect(status().isBadRequest());
     }
 }

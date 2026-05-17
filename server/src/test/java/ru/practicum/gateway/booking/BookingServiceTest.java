@@ -167,7 +167,7 @@ public class BookingServiceTest {
         when(bookingRepository.findAllCurrentBookingsByBookerIdOrderByStartDesc(eq(1L), any(LocalDateTime.class)))
                 .thenReturn(List.of(booking));
 
-        List<BookingDto> result = bookingService.getBookingsForUser(1L, "CURRENT");
+        List<BookingDto> result = bookingService.getBookingsForUser(1L, "CURRENT", 1, 1);
 
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.getFirst().getId()).isEqualTo(3L);
@@ -186,7 +186,7 @@ public class BookingServiceTest {
     void testGetBookingsForUserWhenStateParamIncorrect() {
         when(userService.existsById(any(Long.class))).thenReturn(true);
 
-        assertThatThrownBy(() -> bookingService.getBookingsForUser(1L, "SOME_STATE"))
+        assertThatThrownBy(() -> bookingService.getBookingsForUser(1L, "SOME_STATE", 1, 1))
                 .isInstanceOf(ValidationException.class)
                 .hasMessage("Укажите корректный параметр state. " +
                         "Возможные значения: CURRENT, PAST, FUTURE, WAITING, REJECTED, ALL");
@@ -205,7 +205,7 @@ public class BookingServiceTest {
         when(bookingRepository.findAllFutureItemBookingsByOwnerIdOrderByStartDesc(eq(1L), any(LocalDateTime.class)))
                 .thenReturn(List.of(booking));
 
-        List<BookingDto> result = bookingService.getBookingsForItemsByUser(1L, "future");
+        List<BookingDto> result = bookingService.getBookingsForItemsByUser(1L, "future", 1, 1);
 
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.getFirst().getId()).isEqualTo(3L);
@@ -224,7 +224,7 @@ public class BookingServiceTest {
     void testGetBookingsForItemsByUserWhenStateParamIncorrect() {
         when(userService.existsById(any(Long.class))).thenReturn(true);
 
-        assertThatThrownBy(() -> bookingService.getBookingsForItemsByUser(1L, "SOME_STATE"))
+        assertThatThrownBy(() -> bookingService.getBookingsForItemsByUser(1L, "SOME_STATE", 1, 1))
                 .isInstanceOf(ValidationException.class)
                 .hasMessage("Укажите корректный параметр state. " +
                         "Возможные значения: CURRENT, PAST, FUTURE, WAITING, REJECTED, ALL");

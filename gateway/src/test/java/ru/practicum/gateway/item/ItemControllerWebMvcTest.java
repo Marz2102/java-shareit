@@ -40,8 +40,8 @@ public class ItemControllerWebMvcTest {
     @Test
     void testCreateItem() throws Exception {
         ItemCreateDto itemCreateDto = new ItemCreateDto("item", "Some usual description", true, null);
-        ResponseEntity<Object> response = ResponseEntity.ok(Map.of("id", 1L, "name", "item",
-                "description", "Some usual description", "available", true));
+        ResponseEntity<Object> response = ResponseEntity.status(201).body((Map.of("id", 1L, "name", "item",
+                "description", "Some usual description", "available", true)));
 
         when(itemClient.addItem(any(ItemCreateDto.class), eq(1L))).thenReturn(response);
 
@@ -49,7 +49,7 @@ public class ItemControllerWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L)
                         .content(objectMapper.writeValueAsString(itemCreateDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("item"))
                 .andExpect(jsonPath("$.description").value("Some usual description"))
