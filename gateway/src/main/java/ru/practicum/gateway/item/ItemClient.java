@@ -44,6 +44,7 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<Object> addComment(CommentCreateDto comment, Long userId, Long id) {
         return post("/{id}/comment", userId, Map.of("id", id), comment);
     }
+
     public ResponseEntity<Object> getCommentsByItemId(Long id, Long userId) {
         return get("/{id}", userId, Map.of("id", id));
     }
