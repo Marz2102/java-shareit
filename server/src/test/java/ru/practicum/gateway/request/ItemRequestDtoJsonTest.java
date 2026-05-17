@@ -44,7 +44,7 @@ public class ItemRequestDtoJsonTest {
 
     @Test
     void testSerializeFullItemRequestDto() throws Exception {
-        LocalDateTime created = LocalDateTime.now();
+        LocalDateTime created = LocalDateTime.now().withNano(0);
 
         FullItemRequestDto fullItemRequestDto = new FullItemRequestDto();
         fullItemRequestDto.setId(1L);
