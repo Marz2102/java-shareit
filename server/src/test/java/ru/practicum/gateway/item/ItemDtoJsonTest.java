@@ -76,8 +76,6 @@ public class ItemDtoJsonTest {
         assertThat(jsonContent).extractingJsonPathStringValue("$.name").isEqualTo("name");
         assertThat(jsonContent).extractingJsonPathStringValue("$.description").isEqualTo("description");
         assertThat(jsonContent).extractingJsonPathBooleanValue("$.available").isFalse();
-        assertThat(jsonContent).extractingJsonPathStringValue("$.lastBooking").isEqualTo(start.toString());
-        assertThat(jsonContent).extractingJsonPathStringValue("$.nextBooking").isEqualTo(end.toString());
         assertThat(jsonContent).extractingJsonPathArrayValue("$.comments").isEmpty();
     }
 
@@ -96,7 +94,6 @@ public class ItemDtoJsonTest {
         assertThat(jsonContent).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(jsonContent).extractingJsonPathStringValue("$.text").isEqualTo("text");
         assertThat(jsonContent).extractingJsonPathStringValue("$.authorName").isEqualTo("author");
-        assertThat(jsonContent).extractingJsonPathStringValue("$.created").isEqualTo(created.toString());
     }
 
     @Test

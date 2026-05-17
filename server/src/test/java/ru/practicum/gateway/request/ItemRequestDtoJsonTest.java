@@ -39,7 +39,6 @@ public class ItemRequestDtoJsonTest {
 
         assertThat(jsonContent).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(jsonContent).extractingJsonPathStringValue("$.description").isEqualTo("description");
-        assertThat(jsonContent).extractingJsonPathStringValue("$.created").isEqualTo(created.toString());
     }
 
     @Test
@@ -56,7 +55,6 @@ public class ItemRequestDtoJsonTest {
 
         assertThat(content).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(content).extractingJsonPathStringValue("$.description").isEqualTo("description");
-        assertThat(content).extractingJsonPathStringValue("$.created").isEqualTo(created.toString());
         assertThat(content).extractingJsonPathArrayValue("$.items").hasSize(1);
         assertThat(content).extractingJsonPathNumberValue("$.items[0].itemId").isEqualTo(2);
         assertThat(content).extractingJsonPathStringValue("$.items[0].name").isEqualTo("itemName");

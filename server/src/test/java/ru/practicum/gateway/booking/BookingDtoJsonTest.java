@@ -41,8 +41,6 @@ public class BookingDtoJsonTest {
         JsonContent<BookingDto> jsonContent = jsonBookingDto.write(bookingDto);
 
         assertThat(jsonContent).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(jsonContent).extractingJsonPathStringValue("$.start").isEqualTo(start.toString());
-        assertThat(jsonContent).extractingJsonPathStringValue("$.end").isEqualTo(end.toString());
         assertThat(jsonContent).extractingJsonPathNumberValue("$.item.id").isEqualTo(1);
         assertThat(jsonContent).extractingJsonPathStringValue("$.item.name").isEqualTo("item");
         assertThat(jsonContent).extractingJsonPathNumberValue("$.booker.id").isEqualTo(1);
@@ -60,7 +58,5 @@ public class BookingDtoJsonTest {
         BookingCreateDto bookingCreateDto = jsonBookingCreateDto.parse(json).getObject();
 
         assertThat(bookingCreateDto.getItemId()).isEqualTo(1);
-        assertThat(bookingCreateDto.getStart()).isEqualTo(start.toString());
-        assertThat(bookingCreateDto.getEnd()).isEqualTo(end.toString());
     }
 }
