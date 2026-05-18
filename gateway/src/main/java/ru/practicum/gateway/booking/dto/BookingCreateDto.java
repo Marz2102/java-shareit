@@ -1,6 +1,7 @@
 package ru.practicum.gateway.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -27,4 +28,9 @@ public class BookingCreateDto {
     @NotNull(message = "Укажите окончание бронирования")
     @FutureOrPresent(message = "Нельзя указать уже прошедшую дату")
     private LocalDateTime end;
+
+    @AssertTrue(message = "Время окончания бронирования не может быть раньше времени начала")
+    public boolean isValid() {
+        return end.isAfter(start);
+    }
 }

@@ -18,7 +18,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getCommentsForUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> getCommentsForUserItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.getCommentsForUserItems(userId);
     }
 
